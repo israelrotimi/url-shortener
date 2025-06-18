@@ -19,20 +19,25 @@ app.use("/urls", urlRouter);
 
 app.use(errorMiddleware)
 
-app.get("/:uid", (req, res) => {
-  // get unique string from url
-  const uid = req.params
-  // find in db
-  const target = URL.findOne({ uid })
+app.get("/:uid", async (req, res, next) => {
+ try {
+   // get unique string from url
+   const { uid } = req.params
+   // find in db
+   const target = await URL.findOne({ shortenedStringId: uid })
+   
+   // if not found raise 404
+   if (!target) {
+     res.status(404).send("resource not found")
+     return;
+   }
+ 
+   // redirect to target url
+   res.redirect(target.targetURL)
+ } catch (error) {
+   next(error);
+ }
   
-  // if not found raise 404
-  if (!target) {
-    res.statusCode(404).send("resource not found")
-    return;
-  }
-
-  // redirect to target url
-  res.redirect(target.targetURL)
 });
 
 app.listen(PORT, async () => {

@@ -1,4 +1,4 @@
-import {Schema, Model} from "mongoose";
+import {Schema, model} from "mongoose";
 
 const urlSchema = new Schema({
     shortenedStringId: {
@@ -32,9 +32,8 @@ const urlSchema = new Schema({
     },
 }, { timestamps: true });
 
-urlSchema.index({ shortenedStringId: 1 });
 
 
-const URL = new Model("URL", urlSchema);
+const Url = new model("Url", urlSchema);
 
-export default URL;
+export default Url;

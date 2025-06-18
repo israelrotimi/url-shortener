@@ -1,17 +1,22 @@
-import { Router, json } from "express";
+import { Router } from "express";
+import Url from "../models/url.model.js";
 
 const urlRouter = Router();
 
-urlRouter.get("/", async (req, res) => {
-  const { url } = req.query;
+urlRouter.post("/", async (req, res, next) => {
+  const { url } = req.body;
 
   // save url in db, retrieve generated string and send the shortened url as response
-  const newUrl = await URL.create({ targetURL: url })
-  res.statusCode(201)
-  .json({
-    originalURL: url.targetURL,
-    shortURL: url.shortURL
-  })
+  try {
+    const newUrl = await Url.create({ targetURL: url })
+    res.status(201)
+    .json({
+      originalURL: newUrl.targetURL,
+      shortURL: `${req.baseUrl}/${newUrl.shortenedStringId}`,
+    })
+  } catch (error) {
+    next(error)
+  }
 
 });
 
